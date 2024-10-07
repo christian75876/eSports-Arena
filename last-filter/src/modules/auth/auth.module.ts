@@ -17,9 +17,11 @@ import { InsertRoleService, InserUserService } from './services/insert-init';
 import { Role } from './entities/role.entity';
 import { Participation } from '../participation/entities/participation.entity';
 import { Tournament } from '../tournament/entities/tournament.entity';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forFeature([User, Role, Participation, Tournament]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -45,6 +47,7 @@ import { Tournament } from '../tournament/entities/tournament.entity';
     LogInService,
     InserUserService,
     InsertRoleService,
+    JwtStrategy,
   ],
   exports: [InserUserService, InsertRoleService],
 })
