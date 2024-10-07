@@ -1,5 +1,3 @@
-// src/entities/participation.entity.ts
-
 import { User } from 'src/modules/auth/entities/user.entity';
 import { Tournament } from 'src/modules/tournament/entities/tournament.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
