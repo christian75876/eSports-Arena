@@ -1,34 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, UseGuards } from '@nestjs/common';
 import { ResultService } from './result.service';
 import { CreateResultDto } from './dto/create-result.dto';
-import { UpdateResultDto } from './dto/update-result.dto';
+import { ApiPostOperation } from 'src/common/decorators/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
-@Controller('result')
+@ApiTags('result')
+@Controller('results')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ResultController {
   constructor(private readonly resultService: ResultService) {}
 
+  @ApiPostOperation('/results', CreateResultDto, CreateResultDto, true)
   @Post()
   create(@Body() createResultDto: CreateResultDto) {
-    return this.resultService.create(createResultDto);
+    return this.resultService.createResult(createResultDto);
   }
 
-  @Get()
-  findAll() {
-    return this.resultService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.resultService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateResultDto: UpdateResultDto) {
-    return this.resultService.update(+id, updateResultDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.resultService.remove(+id);
+  @ApiOperation({ summary: 'Get all results for a specific tournament' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of results for the tournament.',
+  })
+  @ApiResponse({ status: 404, description: 'Tournament not found.' })
+  @Get('tournaments/:id')
+  findTournament(@Param('id') id: number) {
+    return this.resultService.findAllResultsByTournament(id);
   }
 }

@@ -1,26 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { CreateParticipationService } from './services/create-participation.service';
 import { CreateParticipationDto } from './dto/create-participation.dto';
-import { UpdateParticipationDto } from './dto/update-participation.dto';
+import { Participation } from './entities/participation.entity';
 
 @Injectable()
 export class ParticipationService {
-  create(createParticipationDto: CreateParticipationDto) {
-    return 'This action adds a new participation';
-  }
+  constructor(
+    private readonly createParticipationService: CreateParticipationService,
+  ) {}
 
-  findAll() {
-    return `This action returns all participation`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} participation`;
-  }
-
-  update(id: number, updateParticipationDto: UpdateParticipationDto) {
-    return `This action updates a #${id} participation`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} participation`;
+  async createParticipation(
+    createParticipationDto: CreateParticipationDto,
+  ): Promise<Participation> {
+    return this.createParticipationService.createParticipation(
+      createParticipationDto,
+    );
   }
 }

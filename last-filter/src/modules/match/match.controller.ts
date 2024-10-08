@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
-import { UpdateMatchDto } from './dto/update-match.dto';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiPostOperation } from 'src/common/decorators/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
-@Controller('match')
+@ApiTags('matches')
+@Controller('matches')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 
+  @ApiPostOperation('/match', CreateMatchDto, CreateMatchDto, true)
   @Post()
   create(@Body() createMatchDto: CreateMatchDto) {
-    return this.matchService.create(createMatchDto);
+    return this.matchService.createMatch(createMatchDto);
   }
 
-  @Get()
-  findAll() {
-    return this.matchService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.matchService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMatchDto: UpdateMatchDto) {
-    return this.matchService.update(+id, updateMatchDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.matchService.remove(+id);
+  @Roles(1)
+  @ApiOperation({ summary: 'Generate matches for a specific tournament' })
+  @ApiResponse({ status: 200, description: 'Matches generated successfully.' })
+  @ApiResponse({ status: 404, description: 'Tournament not found.' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the tournament to generate matches for',
+    type: Number,
+  })
+  @Post('tournament/:id/generate')
+  generateMatchesForTournament(@Param('id') tournamentId: number) {
+    return this.matchService.generateMatchesForTournament(tournamentId);
   }
 }
