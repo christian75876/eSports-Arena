@@ -8,4 +8,8 @@ export class MatchService {
   createMatch(createMatchDto: CreateMatchDto) {
     return this.createMatchService.createMatch(createMatchDto);
   }
+
+  generateMatchesForTournament(tournamentId: number) {
+    return this.createMatchService.generateMatchesForTournament(tournamentId);
+  }
 }
