@@ -1,5 +1,3 @@
-// src/entities/result.entity.ts
-
 import { User } from 'src/modules/auth/entities/user.entity';
 import { Match } from 'src/modules/match/entities/match.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';

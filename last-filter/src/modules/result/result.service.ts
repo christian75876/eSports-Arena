@@ -1,26 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateResultDto } from './dto/create-result.dto';
-import { UpdateResultDto } from './dto/update-result.dto';
+import { CreateResultService } from './services/create-result.service';
 
 @Injectable()
 export class ResultService {
-  create(createResultDto: CreateResultDto) {
-    return 'This action adds a new result';
+  constructor(private readonly createResultService: CreateResultService) {}
+  createResult(createResultDto: CreateResultDto) {
+    return this.createResultService.createResult(createResultDto);
   }
 
-  findAll() {
-    return `This action returns all result`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} result`;
-  }
-
-  update(id: number, updateResultDto: UpdateResultDto) {
-    return `This action updates a #${id} result`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} result`;
+  findAllResultsByTournament(tournamentId: number) {
+    return this.createResultService.findResultsByTournament(tournamentId);
   }
 }

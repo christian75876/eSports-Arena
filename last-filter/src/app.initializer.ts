@@ -14,5 +14,6 @@ export class AppInitializer implements OnModuleInit {
   async onModuleInit() {
     await this.roleService.insertRoles();
     await this.userService.insertAdminUser();
+    await this.userService.insertUsers();
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Match } from '../entities/match.entity';
 import { Repository } from 'typeorm';
@@ -21,6 +21,11 @@ export class CreateMatchService {
     const tournament = await this.tournamentRepository.findOne({
       where: { id: tournamentId },
     });
+
+    if (!tournament) {
+      throw new NotFoundException('Invalid tournament.');
+    }
+
     const player1 = await this.userRepository.findOne({
       where: { id: player1Id },
     });
@@ -39,5 +44,39 @@ export class CreateMatchService {
       scheduledAt: new Date(),
     });
     return await this.matchRepository.save(match);
+  }
+
+  async generateMatchesForTournament(tournamentId: number): Promise<Match[]> {
+    const users = await this.userRepository.find({
+      where: { role_id: 2 },
+    });
+
+    const tournament = await this.tournamentRepository.findOne({
+      where: { id: tournamentId },
+    });
+
+    if (!tournament) {
+      throw new Error('Tournament not found.');
+    }
+
+    if (users.length < 2)
+      throw new Error('Not enough players to generate matches.');
+
+    const matches: Match[] = [];
+    for (let i = 0; i < users.length; i += 2) {
+      if (i + 1 < users.length) {
+        const createMatchDto: CreateMatchDto = {
+          tournamentId: tournament.id,
+          player1Id: users[i].id,
+          player2Id: users[i + 1].id,
+        };
+
+        const match = await this.createMatch(createMatchDto);
+        matches.push(match);
+      }
+    }
+
+    console.log('Matches generated successfully:', matches);
+    return matches;
   }
 }
