@@ -64,10 +64,16 @@ export class CreateResultService {
     return this.resultRepository.save(result);
   }
 
-  async findResultsByTournament(tournamentId: number): Promise<Result[]> {
+  async findResultsByTournament(
+    tournamentId: number,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<Result[]> {
     const matches = await this.matchRepository.find({
       where: { tournament: { id: tournamentId } },
       relations: ['results'],
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     const results = matches.flatMap(match => match.results);
